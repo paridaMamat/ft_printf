@@ -1,0 +1,69 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pmaimait <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/17 17:04:57 by pmaimait          #+#    #+#             */
+/*   Updated: 2022/06/17 17:05:19 by pmaimait         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdarg.h>
+#include<unistd.h>
+
+void    check_str(const char *str, va_list arg, int i, int *arg_re)
+{
+    /*char    c;
+
+    if (str[i] == 'c')
+    {
+        c = va_arg(arg, int);
+        *arg_re += write(1, &c, 1);
+    }*/
+
+    if (str[i] == 'c')
+        print_char(arg, arg_re);
+    if (str[i] == '%')
+        *arg_re += write(1, "%", 1);
+    if (str[i] == 'd' || str[i] == 'i')
+        print_int(arg, arg_re);
+    if (str[i] == 'u')
+        print_unit(arg, arg_re);
+    if (str[i] == 'x' || str[i] == 'X')
+        print_hexa(arg, arg_re, str[i]);
+    if (str[i] == 'p')
+        print__address_hexa(arg, arg_re);
+    if (str[i] == 's')
+        print_str(arg, arg_re);
+    
+
+
+}
+
+int ft_printf(const char *str, ...)
+{
+    va_list args;
+    int     result;
+    int     *arg_re;
+    int     i;
+
+    va_start(args, str);
+    result = 0;
+    i = 0;
+    arg_re = &result;
+    while (str[i])
+    {
+        if (str[i] == '%')
+        {
+            i++;
+            check_str(str, args, i, arg_re);
+        }
+        else
+            result += write(1, &str[i], 1);
+        i++;
+    }
+    va_end(args);
+    return (result);
+}
